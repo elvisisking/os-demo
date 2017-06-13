@@ -3,15 +3,14 @@ LABEL description="A simple demo using airbnb/superset and postgres" \
       maintainers="Mark Drilling <mdrillin@redhat.com>,Daniel Florian <dflorian@redhat.com>"
 
 # Superset setup options
-ENV SUPERSET_VERSION 0.18.2
+ENV SUPERSET_VERSION 0.18.4
 ENV SUPERSET_HOME /superset
 ENV SUP_ROW_LIMIT 5000
 ENV SUP_WEBSERVER_THREADS 8
 ENV SUP_WEBSERVER_PORT 8088
 ENV SUP_WEBSERVER_TIMEOUT 60
 ENV SUP_SECRET_KEY 'thisismysecretkey'
-ENV SUP_META_DB_URI "postgresql://postgres@localhost/superset_demo"
-#ENV SUP_META_DB_URI "sqlite:///${SUPERSET_HOME}/superset.db"
+ENV SUP_META_DB_URI "sqlite:///${SUPERSET_HOME}/superset.db"
 ENV SUP_CSRF_ENABLED True
 
 ENV PYTHONPATH $SUPERSET_HOME:$PYTHONPATH

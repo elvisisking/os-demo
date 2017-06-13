@@ -1,0 +1,37 @@
+version: '3.0'
+services:
+  pg_superset_demo:
+    image: pg_superset_demo:latest
+    restart: always
+  redis:
+    image: redis:alpine
+    restart: always
+    volumes:
+      - redis:/data
+  mysql:
+    image: mysql:5.7
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: superset
+      MYSQL_DATABASE: superset
+      MYSQL_USER: superset
+      MYSQL_PASSWORD: superset
+    volumes:
+      - mysql:/var/lib/mysql
+  superset_demo:
+    image: superset_demo:latest
+    restart: always
+    depends_on:
+      - mysql
+      - redis
+    environment:
+      MAPBOX_API_KEY: ${MAPBOX_API_KEY}
+    ports:
+      - "8088:8088"
+    links:
+      - pg_superset_demo
+volumes:
+  mysql:
+    external: false
+  redis:
+    external: false
