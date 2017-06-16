@@ -4,7 +4,7 @@ services:
     image: pg_superset_demo:latest
     container_name: pg_superset_demo
     volumes:
-      - pg_superset_demo:/var/lib/superset-demo/postgres
+      - ./.demo-data/postgres:/var/lib/postgresql/data
     restart: always
   superset_demo:
     image: superset_demo:latest
@@ -15,7 +15,7 @@ services:
     links:
       - pg_superset_demo
     volumes:
-      - ./superset-demo/.superset:/superset
+      - ./.demo-data/superset:/superset
 volumes:
   pg_superset_demo:
     external: false
