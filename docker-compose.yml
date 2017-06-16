@@ -2,11 +2,23 @@ version: '3.0'
 services:
   pg_superset_demo:
     image: pg_superset_demo:latest
+    container_name: pg_superset_demo
+    volumes:
+      - pg_superset_demo:/var/lib/superset-demo/postgres
     restart: always
   superset_demo:
     image: superset_demo:latest
+    container_name: superset_demo
     restart: always
     ports:
       - "8088:8088"
     links:
       - pg_superset_demo
+    volumes:
+      - ./superset-demo/.superset:/superset
+volumes:
+  pg_superset_demo:
+    external: false
+  superset_demo:
+    external: false
+
