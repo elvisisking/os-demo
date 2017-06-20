@@ -1,0 +1,172 @@
+apiVersion: v1
+kind: Template
+labels:
+  compose: os-demo
+metadata:
+  annotations:
+    app.generate.openshift.io/warnings: |-
+      not all docker-compose fields were honored:
+      * pg-demo-data,superset-demo: restart is ignored - all pods are automatically restarted
+  creationTimestamp: null
+  name: superset-demo-template.yaml
+objects:
+- apiVersion: v1
+  kind: ImageStream
+  metadata:
+    creationTimestamp: null
+    name: pg-demo-data
+  spec:
+    tags:
+    - annotations:
+        openshift.io/imported-from: pg-demo-data:latest
+      from:
+        kind: DockerImage
+        name: pg-demo-data:latest
+      generation: null
+      importPolicy: {}
+      name: latest
+      referencePolicy:
+        type: ""
+  status:
+    dockerImageRepository: ""
+- apiVersion: v1
+  kind: DeploymentConfig
+  metadata:
+    creationTimestamp: null
+    name: pg-demo-data
+  spec:
+    replicas: 1
+    selector:
+      deploymentconfig: pg-demo-data
+    strategy:
+      resources: {}
+    template:
+      metadata:
+        creationTimestamp: null
+        labels:
+          deploymentconfig: pg-demo-data
+      spec:
+        containers:
+        - image: pg-demo-data:latest
+          name: pg-demo-data
+          ports:
+          - containerPort: 5432
+          resources: {}
+          volumeMounts:
+          - mountPath: /var/lib/postgresql/data
+            name: dir-1
+        volumes:
+        - emptyDir: {}
+          name: dir-1
+    test: false
+    triggers:
+    - type: ConfigChange
+    - imageChangeParams:
+        automatic: true
+        containerNames:
+        - pg-demo-data
+        from:
+          kind: ImageStreamTag
+          name: pg-demo-data:latest
+      type: ImageChange
+  status:
+    availableReplicas: 0
+    latestVersion: 0
+    observedGeneration: 0
+    replicas: 0
+    unavailableReplicas: 0
+    updatedReplicas: 0
+- apiVersion: v1
+  kind: ImageStream
+  metadata:
+    creationTimestamp: null
+    name: superset-demo
+  spec:
+    tags:
+    - annotations:
+        openshift.io/imported-from: superset-demo:latest
+      from:
+        kind: DockerImage
+        name: superset-demo:latest
+      generation: null
+      importPolicy: {}
+      name: latest
+      referencePolicy:
+        type: ""
+  status:
+    dockerImageRepository: ""
+- apiVersion: v1
+  kind: DeploymentConfig
+  metadata:
+    creationTimestamp: null
+    name: superset-demo
+  spec:
+    replicas: 1
+    selector:
+      deploymentconfig: superset-demo
+    strategy:
+      resources: {}
+    template:
+      metadata:
+        creationTimestamp: null
+        labels:
+          deploymentconfig: superset-demo
+      spec:
+        containers:
+        - image: superset-demo:latest
+          name: superset-demo
+          ports:
+          - containerPort: 8088
+          resources: {}
+          volumeMounts:
+          - mountPath: /superset
+            name: dir-1
+        volumes:
+        - emptyDir: {}
+          name: dir-1
+    test: false
+    triggers:
+    - type: ConfigChange
+    - imageChangeParams:
+        automatic: true
+        containerNames:
+        - superset-demo
+        from:
+          kind: ImageStreamTag
+          name: superset-demo:latest
+      type: ImageChange
+  status:
+    availableReplicas: 0
+    latestVersion: 0
+    observedGeneration: 0
+    replicas: 0
+    unavailableReplicas: 0
+    updatedReplicas: 0
+- apiVersion: v1
+  kind: Service
+  metadata:
+    creationTimestamp: null
+    name: pg-demo-data
+  spec:
+    ports:
+    - name: 5432-tcp
+      port: 5432
+      targetPort: 5432
+    selector:
+      deploymentconfig: pg-demo-data
+  status:
+    loadBalancer: {}
+- apiVersion: v1
+  kind: Service
+  metadata:
+    creationTimestamp: null
+    name: superset-demo
+  spec:
+    ports:
+    - name: 8088-tcp
+      port: 8088
+      targetPort: 8088
+    selector:
+      deploymentconfig: superset-demo
+  status:
+    loadBalancer: {}

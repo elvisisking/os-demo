@@ -1,8 +1,10 @@
-version: '3.0'
+version: '2'
 services:
   pg-demo-data:
     image: pg-demo-data:latest
     container_name: pg-demo-data
+    ports:
+      - "5432:5432"
     volumes:
       - ./.demo-data/postgres:/var/lib/postgresql/data
     restart: always
