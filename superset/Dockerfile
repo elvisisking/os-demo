@@ -43,6 +43,8 @@ RUN apt-get update && apt-get install -y $DB_PACKAGES \
 # remove build dependencies
 RUN mkdir $SUPERSET_HOME
 
+COPY demo_init.py /demo_init.py
+COPY superset_config.py /superset_config.py
 COPY superset-init.sh /superset-init.sh
 RUN chmod +x /superset-init.sh
 
